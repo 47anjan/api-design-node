@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
     "noEmit": true,
-    "target": "esnext",
-    "module": "nodenext",
+    "target": "ESNext",
+    "module": "NodeNext",
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
     "rewriteRelativeImportExtensions": true,
     "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
