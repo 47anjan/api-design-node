@@ -1,20 +1,16 @@
-import { config } from 'dotenv'
+import { env as loadEnv } from 'custom-env'
 import { z } from 'zod'
-import path from 'path'
 
-// Set default stage
 process.env.APP_STAGE = process.env.APP_STAGE || 'dev'
 
 const isProduction = process.env.APP_STAGE === 'production'
 const isDevelopment = process.env.APP_STAGE === 'dev'
 const isTesting = process.env.APP_STAGE === 'test'
 
-config({ path: path.resolve(process.cwd(), '.env') })
-
 if (isDevelopment) {
-  config({ path: path.resolve(process.cwd(), '.env') })
+  loadEnv()
 } else if (isTesting) {
-  config({ path: path.resolve(process.cwd(), '.env.test') })
+  loadEnv('test')
 }
 
 const envSchema = z.object({
@@ -31,19 +27,24 @@ const envSchema = z.object({
   BCRYPT_ROUNDS: z.coerce.number().min(10).max(20).default(12),
 })
 
-// Parse and validate
 export type Env = z.infer<typeof envSchema>
-
 let env: Env
 
 try {
   env = envSchema.parse(process.env)
 } catch (e) {
   if (e instanceof z.ZodError) {
-    console.error('❌ Invalid environment variables:\n')
+    console.log('Invalid env var')
     console.error(JSON.stringify(e.flatten().fieldErrors, null, 2))
+
+    e.issues.forEach((err) => {
+      const path = err.path.join('.')
+      console.log(`${path}: ${err.message}`)
+    })
+
     process.exit(1)
   }
+
   throw e
 }
 
