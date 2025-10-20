@@ -1,0 +1,69 @@
+import type { Request, Response, NextFunction } from 'express'
+
+import { type ZodSchema, ZodError } from 'zod'
+
+export const validateBody = (schema: ZodSchema) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const validateData = schema.parse(req.body)
+      req.body = validateData
+      next()
+    } catch (error) {
+      if (error instanceof ZodError) {
+        res
+          .json({
+            message: 'Validation failed',
+            details: error.issues.map((err) => ({
+              field: err.path.join('.'),
+              message: err.message,
+            })),
+          })
+          .status(400)
+      }
+    }
+  }
+}
+
+export const validateParams = (schema: ZodSchema) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      schema.parse(req.params)
+
+      next()
+    } catch (error) {
+      if (error instanceof ZodError) {
+        res
+          .json({
+            message: 'Invalid prams',
+            details: error.issues.map((err) => ({
+              field: err.path.join('.'),
+              message: err.message,
+            })),
+          })
+          .status(400)
+      }
+    }
+  }
+}
+
+export const validateQuery = (schema: ZodSchema) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    try {
+      schema.parse(req.query)
+
+      next()
+    } catch (error) {
+      if (error instanceof ZodError) {
+        res
+          .json({
+            message: 'Invalid query',
+            details: error.issues.map((err) => ({
+              field: err.path.join('.'),
+              message: err.message,
+            })),
+          })
+          .status(400)
+      }
+    }
+  }
+}

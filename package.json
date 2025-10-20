@@ -7,6 +7,10 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "node src/index.ts",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -41,6 +45,7 @@
     "@types/jest": "^29.5.14",
     "@types/morgan": "^1.9.10",
     "@types/node": "^20.19.21",
+    "@types/pg": "^8.15.5",
     "@types/supertest": "^6.0.2",
     "cross-env": "^10.0.0",
     "drizzle-kit": "^0.31.4",
