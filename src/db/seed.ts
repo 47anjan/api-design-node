@@ -1,7 +1,6 @@
+import { fileURLToPath } from 'url'
 import { db } from './connection.ts'
 import { users, habits, entries, tags, habitTags } from './schema.ts'
-
-console.log('seed')
 
 async function seed() {
   console.log('🌱 Starting database seed...')
@@ -78,11 +77,15 @@ async function seed() {
   }
 }
 
-seed()
-  .then(() => process.exit(0))
-  .catch((error) => {
-    console.error(error)
-    process.exit(1)
-  })
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url)
+
+if (isMainModule) {
+  seed()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error(error)
+      process.exit(1)
+    })
+}
 
 export default seed
