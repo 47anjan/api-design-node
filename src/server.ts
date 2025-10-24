@@ -8,6 +8,7 @@ import authRoutes from './routes/authRoutes.ts'
 import userRoutes from './routes/userRoutes.ts'
 import habitRoutes from './routes/habitRoutes.ts'
 import { isTest } from '../env.ts'
+import { authenticateToken } from './middleware/auth.ts'
 
 const app = express()
 
@@ -26,7 +27,7 @@ app.get('/health', (req, res) => {
 })
 
 app.use('/api/auth', authRoutes)
-app.use('/api/user', userRoutes)
-app.use('/api/habits', habitRoutes)
+app.use('/api/user', authenticateToken, userRoutes)
+app.use('/api/habits', authenticateToken, habitRoutes)
 
 export { app }
