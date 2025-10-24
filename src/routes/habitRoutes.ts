@@ -3,6 +3,8 @@ import z from 'zod'
 import { validateBody, validateParams } from '../middleware/validation.ts'
 import {
   createHabit,
+  deleteHabit,
+  getHabitById,
   getUserHabits,
   updateHabit,
 } from '../controllers/habitController.ts'
@@ -24,9 +26,7 @@ const completeHabitSchema = z.object({
 
 router.get('/', getUserHabits)
 
-router.get('/:id', (req, res) => {
-  res.json({ message: 'got one habit' })
-})
+router.get('/:id', getHabitById)
 
 router.post('/', validateBody(createHabitSchema), createHabit)
 
@@ -41,8 +41,6 @@ router.post(
 
 router.put('/:id', updateHabit)
 
-router.delete('/:id', (req, res) => {
-  res.json({ message: 'habit deleted' })
-})
+router.delete('/:id', deleteHabit)
 
 export default router

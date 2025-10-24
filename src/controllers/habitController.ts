@@ -1,7 +1,7 @@
 import type { Response } from 'express'
 import type { AuthenticatedRequest } from '../middleware/auth.ts'
 import db from '../db/connection.ts'
-import { habits, habitTags } from '../db/schema.ts'
+import { entries, habits, habitTags, users } from '../db/schema.ts'
 import { and, desc, eq } from 'drizzle-orm'
 
 export const createHabit = async (req: AuthenticatedRequest, res: Response) => {
@@ -122,5 +122,64 @@ export const updateHabit = async (req: AuthenticatedRequest, res: Response) => {
   } catch (error) {
     console.log({ error })
     res.status(500).json({ error: 'Failed to update habits' })
+  }
+}
+
+export const getHabitById = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user!.id
+    const { id } = req.params
+
+    const habit = await db.query.habits.findFirst({
+      where: and(eq(habits.id, id), eq(habits.userId, userId)),
+      with: {
+        habitTags: {
+          with: {
+            tag: true,
+          },
+        },
+        entries: {
+          orderBy: [desc(entries.completionDate)],
+          limit: 10,
+        },
+      },
+    })
+
+    if (!habit) {
+      return res.status(404).json({ error: 'Habit not found' })
+    }
+
+    res.json({
+      habit: habit,
+    })
+  } catch (error) {
+    console.log({ error })
+    res.status(500).json({ error: 'Failed to get habit' })
+  }
+}
+
+export const deleteHabit = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const { id } = req.params
+    const userId = req.user!?.id
+
+    const [deletedHabit] = await db
+      .delete(habits)
+      .where(and(eq(habits.id, id), eq(habits.userId, userId)))
+      .returning()
+
+    if (!deletedHabit) {
+      return res.status(404).json({ error: 'Habit not found' })
+    }
+
+    res.json({
+      message: 'Habit deleted successfully',
+    })
+  } catch (error) {
+    console.log({ error })
+    res.status(500).json({ error: 'Failed to delete habits' })
   }
 }
