@@ -18,8 +18,6 @@ const createHabitSchema = z.object({
   tagIds: z.array(z.string()).optional(),
 })
 
-{
-}
 const completeHabitSchema = z.object({
   id: z.string(),
 })
