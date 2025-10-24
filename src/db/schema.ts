@@ -77,6 +77,7 @@ export const habitsRelations = relations(habits, ({ one, many }) => ({
 
   entries: many(entries),
   tags: many(tags),
+  habitTags: many(habitTags),
 }))
 
 export const entiresRelations = relations(entries, ({ one }) => ({
