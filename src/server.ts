@@ -7,6 +7,7 @@ import morgan from 'morgan'
 import authRoutes from './routes/authRoutes.ts'
 import userRoutes from './routes/userRoutes.ts'
 import habitRoutes from './routes/habitRoutes.ts'
+import tagRoutes from './routes/tagRoutes.ts'
 import { isTest } from '../env.ts'
 import { authenticateToken } from './middleware/auth.ts'
 
@@ -29,5 +30,6 @@ app.get('/health', (req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/user', authenticateToken, userRoutes)
 app.use('/api/habits', authenticateToken, habitRoutes)
+app.use('/api/tags', authenticateToken, tagRoutes)
 
 export { app }
