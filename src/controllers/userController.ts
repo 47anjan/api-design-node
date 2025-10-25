@@ -34,3 +34,39 @@ export const getProfile = async (req: AuthenticatedRequest, res: Response) => {
     res.status(500).json({ error: 'Failed to fetch profile' })
   }
 }
+
+export const updateProfile = async (
+  req: AuthenticatedRequest,
+  res: Response
+) => {
+  try {
+    const userId = req.user!.id
+    const { lastName, firstName, username, email } = req.body
+
+    const [updatedUser] = await db
+      .update(users)
+      .set({
+        lastName,
+        firstName,
+        email,
+        username,
+      })
+      .where(eq(users.id, userId))
+      .returning({
+        id: users.id,
+        email: users.email,
+        username: users.username,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        updatedAt: users.updatedAt,
+      })
+
+    res.json({
+      message: 'Profile updated successfully',
+      user: updatedUser,
+    })
+  } catch (error) {
+    console.log({ error })
+    res.status(500).json({ error: 'Failed to update profile' })
+  }
+}
