@@ -13,4 +13,5 @@ const createTagSchema = z.object({
 router.get('/', getTags)
 router.post('/', validateBody(createTagSchema), createTag)
 
+
 export default router
